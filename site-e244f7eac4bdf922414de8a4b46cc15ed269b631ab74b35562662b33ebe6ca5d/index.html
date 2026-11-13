@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>周末植物交换站</title>
+<style>
+  :root{
+    --green:#2f7d4f;
+    --green-dark:#245f3c;
+    --leaf:#eaf6ee;
+    --bg:#f6faf7;
+    --card:#ffffff;
+    --text:#22332a;
+    --muted:#6b7f74;
+    --shadow:0 6px 20px rgba(36,95,60,.10);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+  }
+  header{
+    background:linear-gradient(135deg,var(--green) 0%,var(--green-dark) 100%);
+    color:#fff;
+    padding:48px 20px 40px;
+    text-align:center;
+  }
+  header h1{font-size:2rem;margin:0 0 8px;letter-spacing:1px}
+  header p{margin:0;opacity:.9;font-size:.95rem}
+  .wrap{max-width:880px;margin:0 auto;padding:28px 20px 60px}
+  .search-box{
+    background:var(--card);
+    border-radius:14px;
+    padding:18px;
+    box-shadow:var(--shadow);
+    margin-bottom:22px;
+  }
+  .search-box label{display:block;font-weight:600;margin-bottom:8px;font-size:.95rem}
+  #search{
+    width:100%;
+    padding:12px 14px;
+    font-size:1rem;
+    border:1px solid #cfded5;
+    border-radius:10px;
+    background:#fbfdfc;
+    color:var(--text);
+  }
+  #search:focus{outline:2px solid var(--green);border-color:var(--green)}
+  .hint{font-size:.82rem;color:var(--muted);margin-top:8px}
+  .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+  .plant-card{
+    background:var(--card);
+    border-radius:14px;
+    padding:20px;
+    box-shadow:var(--shadow);
+    border-top:4px solid var(--green);
+  }
+  .plant-card h2{margin:0 0 6px;font-size:1.15rem}
+  .plant-card .desc{margin:0 0 14px;color:var(--muted);font-size:.94rem}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+  .tag{background:var(--leaf);color:var(--green-dark);font-size:.78rem;padding:3px 10px;border-radius:999px}
+  .meta{font-size:.85rem;color:var(--muted);border-top:1px dashed #dde8e1;padding-top:10px}
+  #empty{
+    display:none;
+    text-align:center;
+    padding:48px 20px;
+    color:var(--muted);
+    background:var(--card);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+  }
+  #empty.show{display:block}
+  #empty .big{font-size:2.6rem;display:block;margin-bottom:8px}
+  footer{text-align:center;color:var(--muted);font-size:.82rem;padding:26px 16px 40px}
+</style>
+</head>
+<body>
+<header>
+  <h1>周末植物交换站</h1>
+  <p>把你的绿意，换给需要它的人</p>
+</header>
+
+<main class="wrap">
+  <section class="search-box">
+    <label for="search">搜索植物名称</label>
+    <input id="search" type="search" placeholder="例如：绿萝、龟背竹、多肉" autocomplete="off">
+    <p class="hint">输入植物名称或描述中的关键词即可即时筛选。下方为演示用虚构数据。</p>
+  </section>
+
+  <section id="list" class="grid" aria-live="polite">
+    <article class="plant-card" data-name="绿萝 pothos epipremnum aureum">
+      <h2>绿萝</h2>
+      <p class="desc">耐阴好养的藤蔓植物，换一盆带回家能净化空气。</p>
+      <div class="tags"><span class="tag">易养</span><span class="tag">净化空气</span><span class="tag">观叶</span></div>
+      <p class="meta">📍 周六 10:00 · 城南花鸟市场 3 号摊位</p>
+    </article>
+
+    <article class="plant-card" data-name="龟背竹 monstera deliciosa">
+      <h2>龟背竹</h2>
+      <p class="desc">叶片开裂如龟背，ins 风十足，适合客厅角落摆一盆。</p>
+      <div class="tags"><span class="tag">大叶</span><span class="tag">半阴</span><span class="tag">网红款</span></div>
+      <p class="meta">📍 周六 14:00 · 图书馆前广场交换角</p>
+    </article>
+
+    <article class="plant-card" data-name="多肉拼盆 succulent">
+      <h2>多肉拼盆</h2>
+      <p class="desc">五株小多肉组合，色彩丰富，放在窗台就能慢慢长大。</p>
+      <div class="tags"><span class="tag">小巧</span><span class="tag">桌摆</span><span class="tag">组合盆</span></div>
+      <p class="meta">📍 周日 09:30 · 老街咖啡馆后院</p>
+    </article>
+  </section>
+
+  <section id="empty" role="status">
+    <span class="big">🪴</span>
+    <p>没有找到植物</p>
+    <p class="hint">换个关键词试试，或清空搜索框查看全部植物。</p>
+  </section>
+
+  <footer>本页面为演示作品，以上三条植物交换信息均为虚构示例数据。<br>周末植物交换站 · SuperAgent 生成</footer>
+</main>
+
+<script>
+(function(){
+  var input = document.getElementById('search');
+  var list = document.getElementById('list');
+  var empty = document.getElementById('empty');
+  var cards = Array.prototype.slice.call(list.querySelectorAll('.plant-card'));
+
+  function filter(){
+    var q = (input.value || '').trim().toLowerCase();
+    var visible = 0;
+    cards.forEach(function(card){
+      var haystack = (card.getAttribute('data-name') + ' ' + card.textContent).toLowerCase();
+      if(q === '' || haystack.indexOf(q) !== -1){
+        card.style.display = '';
+        visible++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+    if(visible === 0){
+      empty.classList.add('show');
+    } else {
+      empty.classList.remove('show');
+    }
+  }
+
+  input.addEventListener('input', filter);
+  input.addEventListener('search', filter);
+  filter();
+})();
+</script>
+</body>
+</html>
