@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>周末植物交换站</title>
+<style>
+  :root{
+    --green:#2f7a4d;
+    --green-dark:#1f5c39;
+    --green-soft:#e8f4ec;
+    --bg:#f6f9f5;
+    --card:#ffffff;
+    --text:#23312a;
+    --muted:#6b7c72;
+    --border:#dfe9e2;
+    --shadow:0 6px 20px rgba(31,92,57,.08);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+    color:var(--text);
+    background:var(--bg);
+    line-height:1.6;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:40px 20px 64px;}
+  header.hero{
+    background:linear-gradient(135deg,var(--green) 0%,var(--green-dark) 100%);
+    color:#fff;
+    border-radius:18px;
+    padding:32px 28px;
+    box-shadow:var(--shadow);
+  }
+  header.hero h1{margin:0 0 8px;font-size:2rem;letter-spacing:.5px;}
+  header.hero p{margin:0;opacity:.92;font-size:.95rem;}
+  .badge-demo{
+    display:inline-block;margin-top:14px;
+    background:rgba(255,255,255,.16);
+    border:1px solid rgba(255,255,255,.35);
+    border-radius:999px;padding:4px 12px;font-size:.78rem;
+  }
+  section.search-panel{
+    margin:28px 0 22px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px 18px 16px;
+    box-shadow:var(--shadow);
+  }
+  label{font-weight:600;font-size:.92rem;display:block;margin-bottom:8px;}
+  .row{display:flex;gap:10px;flex-wrap:wrap;}
+  input[type="search"]{
+    flex:1 1 240px;min-width:0;
+    padding:11px 14px;font-size:1rem;
+    border:1px solid var(--border);border-radius:10px;background:#fbfdfb;color:var(--text);
+  }
+  input[type="search"]:focus{outline:2px solid var(--green);outline-offset:1px;border-color:var(--green);}
+  button{
+    padding:11px 22px;font-size:1rem;border:0;border-radius:10px;
+    background:var(--green);color:#fff;cursor:pointer;font-weight:600;
+  }
+  button:hover{background:var(--green-dark);}
+  button.secondary{background:#eef3ef;color:var(--green-dark);border:1px solid var(--border);}
+  .hint{color:var(--muted);font-size:.82rem;margin:10px 0 0;}
+  .count{color:var(--muted);font-size:.86rem;margin:0 0 12px;}
+  .grid{
+    display:grid;gap:18px;
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  }
+  .plant-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px 18px;
+    box-shadow:var(--shadow);
+    display:flex;flex-direction:column;gap:10px;
+  }
+  .plant-card h2{margin:0;font-size:1.15rem;color:var(--green-dark);}
+  .plant-card .swap{
+    background:var(--green-soft);color:var(--green-dark);
+    border-radius:8px;padding:8px 10px;font-size:.9rem;font-weight:600;
+  }
+  .plant-card dl{margin:0;font-size:.88rem;color:var(--muted);display:grid;grid-template-columns:auto 1fr;gap:4px 10px;}
+  .plant-card dt{font-weight:600;color:var(--text);}
+  .plant-card dd{margin:0;}
+  .tag-self{
+    align-self:flex-start;font-size:.75rem;color:var(--muted);
+    border:1px dashed var(--border);border-radius:999px;padding:2px 10px;
+  }
+  #empty{
+    text-align:center;padding:38px 18px;color:var(--muted);
+    background:var(--card);border:1px dashed var(--border);border-radius:14px;
+    font-size:1.02rem;
+  }
+  #empty.is-hidden{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}
+  footer{margin-top:40px;text-align:center;color:var(--muted);font-size:.8rem;}
+  @media (max-width:520px){
+    .wrap{padding:22px 14px 44px;}
+    header.hero h1{font-size:1.55rem;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1>周末植物交换站</h1>
+    <p>把家里多余的绿植，送给刚好需要它的邻居。</p>
+    <span class="badge-demo">演示站点 · 全部植物信息均为虚构示例数据</span>
+  </header>
+
+  <section class="search-panel" aria-labelledby="search-label">
+    <label id="search-label" for="search">按植物名称搜索</label>
+    <div class="row">
+      <input id="search" type="search" placeholder="例如：龟背竹、琴叶榕、多肉" autocomplete="off" aria-label="按植物名称搜索" />
+      <button id="search-btn" type="button">搜索</button>
+      <button id="clear-btn" type="button" class="secondary">清空</button>
+    </div>
+    <p class="hint">输入植物名称即可即时过滤；按 Esc 可清空搜索条件。</p>
+  </section>
+
+  <p class="count" id="count" role="status" aria-live="polite"></p>
+
+  <section id="list" class="grid" aria-label="植物交换列表"></section>
+
+  <div id="empty" role="status" aria-live="polite">没有找到植物</div>
+
+  <footer>本站为示例演示站点，页面内容与植物交换信息均为虚构，仅用于功能展示。</footer>
+</div>
+
+<script>
+(function () {
+  var plants = [
+    {
+      name: "龟背竹",
+      type: "观叶植物",
+      owner: "阿May（虚构示例）",
+      area: "客厅向阳处",
+      want: "薄荷",
+      note: "长势很好，已经爆盆，可分株后送出。因为怕猫，送给有经验的朋友。",
+      time: "周六下午 14:00–17:00",
+      emoji: "🌿"
+    },
+    {
+      name: "琴叶榕",
+      type: "大型绿植",
+      owner: "老周（虚构示例）",
+      area: "阳台东侧",
+      want: "空气凤梨",
+      note: "养了三年多，主干已木质化，附赠陶土盆与营养土，搬家所以转赠。",
+      time: "周日全天可约",
+      emoji: "🌱"
+    },
+    {
+      name: "多肉拼盘",
+      type: "多肉组合",
+      owner: "小林（虚构示例）",
+      area: "南向窗台",
+      want: "观叶蕨类",
+      note: "共 7 株拼在一个陶盆里，颜色漂亮、易活。适合送给刚开始养植物的新手。",
+      time: "周六上午 09:00–12:00 或傍晚",
+      emoji: "🪴"
+    }
+  ];
+
+  var list = document.getElementById("list");
+  var empty = document.getElementById("empty");
+  var search = document.getElementById("search");
+  var count = document.getElementById("count");
+  var searchBtn = document.getElementById("search-btn");
+  var clearBtn = document.getElementById("clear-btn");
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function cardHtml(p) {
+    return (
+      '<article class="plant-card">' +
+      '<h2>' + escapeHtml(p.emoji) + " " + escapeHtml(p.name) + "</h2>" +
+      '<span class="tag-self">虚构演示数据</span>' +
+      '<div class="swap">可交换：' + escapeHtml(p.want) + "</div>" +
+      "<dl>" +
+      "<dt>分类</dt><dd>" + escapeHtml(p.type) + "</dd>" +
+      "<dt>主人</dt><dd>" + escapeHtml(p.owner) + "</dd>" +
+      "<dt>摆放位置</dt><dd>" + escapeHtml(p.area) + "</dd>" +
+      "<dt>交换时间</dt><dd>" + escapeHtml(p.time) + "</dd>" +
+      "</dl>" +
+      "<p style='margin:0;font-size:.9rem;color:var(--muted);'>" + escapeHtml(p.note) + "</p>" +
+      "</article>"
+    );
+  }
+
+  function render() {
+    var q = search.value.trim().toLowerCase();
+    var matched = plants.filter(function (p) {
+      return !q || p.name.toLowerCase().indexOf(q) !== -1;
+    });
+    list.innerHTML = matched.map(cardHtml).join("");
+    if (matched.length === 0) {
+      empty.classList.remove("is-hidden");
+      list.setAttribute("aria-hidden", "true");
+    } else {
+      empty.classList.add("is-hidden");
+      list.removeAttribute("aria-hidden");
+    }
+    count.textContent = q
+      ? "找到 " + matched.length + " 条与「" + search.value.trim() + "」相关的植物交换信息"
+      : "共 " + matched.length + " 条植物交换信息";
+  }
+
+  search.addEventListener("input", render);
+  search.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { search.value = ""; render(); }
+  });
+  searchBtn.addEventListener("click", function () { render(); });
+  clearBtn.addEventListener("click", function () { search.value = ""; render(); search.focus(); });
+
+  render();
+})();
+</script>
+</body>
+</html>
